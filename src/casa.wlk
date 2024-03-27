@@ -1,95 +1,113 @@
-
 object casaDePepeYJulian {
-	var viveres = 50%(1*100)
+
+	var viveres = 50 % (1 * 100)
 	var monto = 0
-	
-	method monto(_monto){
+
+	method monto(_monto) {
 		monto = _monto
 	}
-	method viveres(_viveres){
+
+	method viveres(_viveres) {
 		viveres = _viveres
 	}
-	
-	method viveresSuficientes(){
-		return viveres == 40%(1*100)
-	}
-	
-	method casaEnOrden(){
-		return self.viveresSuficientes() 
+
+	method viveresSuficientes() {
+		return viveres == 40 % (1 * 100)
 	}
 
-
+	method casaEnOrden() {
+		return self.viveresSuficientes()
+	}
 
 //----------------------------------------------------------------------------------------------------------
-	
-
-
 }
 
+object cuentaCorriente {
 
-object cuentaCorriente{
 	var saldo = 0
-	
-	method extraer(cantidad){
-		 saldo = saldo - cantidad
+
+	method extraer(cantidad) {
+		saldo = saldo - cantidad
 	}
 
-	method depositar(cantidad){
+	method depositar(cantidad) {
 		saldo = saldo + cantidad
 	}
-	method saldo(){
+
+	method saldo() {
 		return saldo
 	}
-	method saldo(_saldo){
+
+	method saldo(_saldo) {
 		saldo = _saldo
 	}
+
 }
 
+object cuentaConGastos {
 
-
-object cuentaConGastos{
 	var saldo = 0
 	var gastoPorOperacion = 0
-	
-	method extraer(cantidad){
-		 saldo = saldo - cantidad - self.gastoPorOperacion()
+
+	method extraer(cantidad) {
+		saldo = saldo - cantidad - self.gastoPorOperacion()
 	}
-	method depositar(cantidad){
+
+	method depositar(cantidad) {
 		saldo = saldo + cantidad - self.gastoPorOperacion()
 	}
-	method gastoPorOperacion(){
+	method gastoPorOperacion() {
 		return gastoPorOperacion
 	}
-	method gastoPorOperacion(_gastoPorOperacion){
+
+	method gastoPorOperacion(_gastoPorOperacion) {
 		gastoPorOperacion = _gastoPorOperacion
 	}
-	method saldo(){
+
+	method saldo() {
 		return saldo
 	}
 	
-	
-	
+	method saldo(_saldo) {
+		saldo = _saldo
+	}
+
 }
 
-object combinada{
-	
-	method saldoTotal(cuenta){
-		return cuenta.saldo() + cuenta.saldo()
+
+object combinada {
+
+	var cuentaPrimaria = cuentaConGastos
+	var cuentaSecundaria = cuentaCorriente
+
+	method saldoDeCombinada(){
+		return cuentaPrimaria.saldo() + cuentaSecundaria.saldo()
 	}
-	method cuentaPrimaria(cuenta){
-		return cuenta.cuentaPrimaria()
+	method cuentaPrimaria(_cuentaPrimaria) {
+		cuentaPrimaria = _cuentaPrimaria
 	}
-	method cuentaSecundaria(cuenta){
-		return cuenta.cuentaSecundaria()
+
+	method cuentaSecundaria(_cuentaSecundaria) {
+		cuentaSecundaria = _cuentaSecundaria
 	}
-	
-	method extraer(cuenta, cantidad){
-		return cuenta.extraer(cantidad)
+
+	method depositar(cantidad) {
+		return cuentaPrimaria.depositar(cantidad)
 	}
-	method extraerDeCuentas(cantidad, cuenta){
-		return if (cantidad < cuenta.cuentaPrimaria()) self.extraer(cuenta, cantidad)
-			   else self.extraer(cuenta, cantidad)
-	}
-	
+
+
+
+	method extraer(cantidad) {
+		return if (cantidad < cuentaPrimaria.saldo()) cuentaPrimaria.extraer(cantidad)
+			   else	cuentaSecundaria.extraer(cantidad)}
+
 }
 
+
+
+
+//EJEMPLO
+// var property precio = 50
+// se utiliza como setter y getter
+
+//VER OBJETO.MIN(0).ABS()

@@ -1,21 +1,19 @@
-
-test "la cuenta primaria es cuenta con gastos, con 50 pesos de costo por operacion.
-	  la secundaria es la cuenta corriente con 500 pesos de saldo.
-	  se depositan 100 pesos en la cuenta combinada, deberan deberan depositarse 50 pesos" {
-
-	cuentaCorriente.saldo(500)
-	assert.equals(50, cuentaConGastos.saldo())
+import casa.*
+test "la cuenta primaria es la cuenta con gastos y tiene 50$ de costo de operacion.
+	  la cuenta secundaria es la cuenta corriente y cuenta con 500$ de saldo.
+	  Se deposita 100$ en la cuenta combinada, la cual debera ir a la cuenta primaria(cuenta con gastos) y debera quedar con 50$ de saldo
+	  se extraen 200$ de la cuenta secundaria, ya que en la cuenta primaria no alcanza. la cuenta primaria debera quedar con saldo de 300$
+	  la cuenta con gastos debera quedar con saldo de 50$. la cuenta corriente debera quedar con saldo en 300$
+	  la cuenta combinada debera quedar en $350" {
+	
+	  cuentaConGastos.gastoPorOperacion(50)
+	  combinada.cuentaPrimaria(cuentaConGastos)
+	  combinada.cuentaSecundaria(cuentaCorriente)
+	  cuentaCorriente.saldo(500)
+	  combinada.depositar(100)
+	  combinada.extraer(200)
+	  assert.equals(50, cuentaConGastos.saldo())
+	  assert.equals(300, cuentaCorriente.saldo())
+	  assert.equals(350, combinada.saldoDeCombinada())
 
 }
-
-
-/*Caso de Prueba: suponiendo que configuramos la cuenta combinada así: 
- * la primaria es la cuenta con gastos con 50 pesos de costo de operación y la secundaria es la cuenta 
- * corriente, ya con 500 pesos de saldo. Luego,
-
-Se depositan 100 pesos en la cuenta combinada (van a la cuenta con gastos, porque es la primaria, 
-* depositándose 50 pesos efectivos).
-Si se extraen 200 pesos (salen de la cuenta corriente, ya que a la primaria no le alcanza, dejándola en 
-* 300 pesos).
-Verificar que el saldo de la cuenta con gastos queda en 50 pesos, la cuenta corriente con 300 pesos y 
-* la combindada con 350 pesos. */
