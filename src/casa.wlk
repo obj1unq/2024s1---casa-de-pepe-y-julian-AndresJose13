@@ -1,6 +1,7 @@
 object casaDePepeYJulian {
-	var viveres = 50
+	var viveres = 0
 	var montoDeReparacion = 0
+	
 	
 	 method viveres(_viveres){
 	 	viveres = _viveres
@@ -12,9 +13,8 @@ object casaDePepeYJulian {
 	 method viveresSuficientes(){
 	 	return self.viveres() > 40
 	 }
-	 
-	 method fondo(){
-	 	return combinada.saldoDeCombinada()
+	 method saldo(){
+	 	return combinada.saldo()
 	 }
 	 
 	 method montoDeReparacion(){
@@ -25,7 +25,7 @@ object casaDePepeYJulian {
    	 }
 	
 	 method hayQueHacerReparaciones(){     //<------------
-	 	return montoDeReparacion > 1
+	 	return montoDeReparacion > 0
 	 }
 	 
 	 method casaEnOrden(){
@@ -33,7 +33,7 @@ object casaDePepeYJulian {
 	 }
 	 
 	 method estrategiaAUsar(estrategia){
-	 	return estrategia.comprar(estrategia)
+	 	return estrategia.comprar()
 	 }
 }	 
 //----------------------------------------------------------------------------------------------------------
@@ -68,7 +68,7 @@ object cuentaConGastos {
 	var gastoPorOperacion = 0
 
 	method extraer(cantidad) {
-		saldo = saldo - cantidad - self.gastoPorOperacion()
+		saldo = saldo - cantidad
 	}
 
 	method depositar(cantidad) {
@@ -96,9 +96,9 @@ object cuentaConGastos {
 object combinada {
 
 	var cuentaPrimaria = cuentaConGastos
-	var cuentaSecundaria = cuentaCorriente
-
-	method saldoDeCombinada(){
+	var cuentaSecundaria = cuentaCorriente	
+	
+	method saldo(){
 		return cuentaPrimaria.saldo() + cuentaSecundaria.saldo()
 	}
 	method cuentaPrimaria(_cuentaPrimaria) {
@@ -116,7 +116,7 @@ object combinada {
 
 
 	method extraer(cantidad) {
-		return if (cantidad < cuentaPrimaria.saldo()) cuentaPrimaria.extraer(cantidad)
+		return if (cantidad <= cuentaPrimaria.saldo()) cuentaPrimaria.extraer(cantidad)
 			   else	cuentaSecundaria.extraer(cantidad)}
 
 }
@@ -137,25 +137,25 @@ object minimoEIndispensable{
 	}
 	
 	
-	method comprar(estrategia){
-		return if (casaDePepeYJulian.viveres() < 40) estrategia.gastar()
-		else casaDePepeYJulian.fondo()
+	method comprar(){
+		return if (casaDePepeYJulian.viveresSuficientes()) self.comprarViveres()
+		else {}
+		
 	}
 	
 	method porcentajeAComprar(){
 		return 40 - casaDePepeYJulian.viveres()
 	}
 	
-
-}
-
-
-
-object gastadoEnCompras{
-	method gastar(estrategia){
-		return combinada.extraer( estrategia.porcentajeAComprar() * estrategia.calidad() )
+	method comprarViveres(){
+		 return combinada.extraer( self.porcentajeAComprar() * self.calidad() )
 	}
 }
+	
+
+
+
+
 
 
 
@@ -163,44 +163,68 @@ object gastadoEnCompras{
  
 object full{
 	const calidad = 5
+	
 	method calidad(){
 		return calidad
 	}
 	
-	method comprar(estrategia){
-		return if(casaDePepeYJulian.casaEnOrden()) estrategia.gastar()
-		else estrategia.gastar()
+	method comprar(){
+		return if (casaDePepeYJulian.casaEnOrden()) self.comprarViveres()
+			   else self.comprarViveres()
 	}
-	method porcentajeAComprar(){
-		return self.porcentajeQueCorresponde() - casaDePepeYJulian.viveres()
+	
+	
+	method comprarViveres(){
+		combinada.extraer( self.porcentajeQueCorresponde() * self.calidad() )
+		casaDePepeYJulian.viveres(self.porcentajeQueCorresponde())
 	}
+	
 	method porcentajeQueCorresponde(){
 		return if (casaDePepeYJulian.casaEnOrden()) 100
-			   else 40
+			   else casaDePepeYJulian.viveres() + 40
 	}	
 	
 	
 	
+	
+	
+	
 	method repararCasa(){
-		return if (self.hayFondos() and self.sobraDinero()) self.reparar()
-			   else "no hay dinero" 
+		return if (self.hayFondos() and self.sobraDinero()) self.reparar() else {} 
+	}
+
+	method repararLaCasa(){
+		return self.repararSiCorresponde()
+	}
+	
+	method repararSiCorresponde(){
+		return if (casaDePepeYJulian.saldo() >= (casaDePepeYJulian.montoDeReparacion() + 1000) ) self.repararCasa() else {}
 	}
 
 	method hayFondos(){
-		return casaDePepeYJulian.fondo() >= casaDePepeYJulian.montoDeReparacion()
+		return casaDePepeYJulian.saldo() >= casaDePepeYJulian.montoDeReparacion()
 	}
 	method sobraDinero(){
-		return casaDePepeYJulian.fondo() - casaDePepeYJulian.montoDeReparacion() > 1000 
+		return casaDePepeYJulian.saldo() - casaDePepeYJulian.montoDeReparacion() > 1000 
 	}
 	method reparar(){
-		return casaDePepeYJulian.fondo() - casaDePepeYJulian.montoDeReparacion()
+		return casaDePepeYJulian.saldo() - casaDePepeYJulian.montoDeReparacion()
 	}
 }
 
 
 	
 
-
+/*casaDePepeYJulian.viveres(50)
+	   	casaDePepeYJulian.seRompioAlgo(100)
+	   	combinada.cuentaPrimaria(cuentaCorriente)
+	   	cuentaCorriente.saldo(1000)
+	   	casaDePepeYJulian.estrategiaAUsar(full)
+	   	full.comprar(full)
+	   	full.repararCasa() 
+	   	* assert.equals(casaDePepeYJulian.viveres() == 40)
+	   	assert.equals(casaDePepeYJulian.montoDeReparacion() == 100)
+	   	assert.equals(cuentaCorriente.saldo() == 800)*/
  
  
  
