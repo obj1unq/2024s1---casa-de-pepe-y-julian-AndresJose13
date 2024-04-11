@@ -1,0 +1,61 @@
+import casa.*
+test "la cuenta primaria es la cuenta con gastos y tiene 50$ de costo de operacion.
+	  la cuenta secundaria es la cuenta corriente y cuenta con 500$ de saldo.
+	  Se deposita 100$ en la cuenta combinada, la cual debera ir a la cuenta primaria(cuenta con gastos) y debera quedar con 50$ de saldo
+	  se extraen 200$ de la cuenta secundaria, ya que en la cuenta primaria no alcanza. la cuenta primaria debera quedar con saldo de 300$
+	  la cuenta con gastos debera quedar con saldo de 50$. la cuenta corriente debera quedar con saldo en 300$
+	  la cuenta combinada debera quedar en $350" {
+	
+	  cuentaConGastos.gastoPorOperacion(50)
+	  combinada.cuentaPrimaria(cuentaConGastos)
+	  combinada.cuentaSecundaria(cuentaCorriente)
+	  cuentaCorriente.saldo(500)
+	  combinada.depositar(100)
+	  combinada.extraer(200)
+	  assert.equals(50, cuentaConGastos.saldo())
+	  assert.equals(300, cuentaCorriente.saldo())
+	  assert.equals(350, combinada.saldoDeCombinada())
+
+}
+
+
+test "La cuenta primaria es la cuenta corriente y cuenta con 0 pesos de saldo.
+	  La cuenta secundaria es la cuenta con gastos y tiene 1000 pesos de costo por operacion y 50000$ de saldo
+	  Se deposita 15000$ en la cuenta combinada, la cual debe ir a la cuenta corriente.
+	  Se extrae 20000$ de la cuenta combinada, la cual deberia descontarse de la cuenta secundaria.
+	  La cuenta corriente debe quedar con un saldo de 15000$.
+	  La cuenta con gastos debe quedar con un saldo de 9000$.
+	  La cuenta combinada debe quedar con saldo de 44000$"{
+	  
+	  
+	  combinada.cuentaPrimaria(cuentaCorriente)
+	  cuentaCorriente.saldo(0)
+	  combinada.cuentaSecundaria(cuentaConGastos)
+	  cuentaConGastos.gastoPorOperacion(1000)
+	  cuentaConGastos.saldo(50000)
+	  combinada.depositar(15000)
+	  combinada.extraer(20000)
+	  assert.equals(30000, cuentaConGastos.saldo())
+	  assert.equals(15000, cuentaCorriente.saldo())
+	  assert.equals(45000, combinada.saldoDeCombinada())
+	  }
+
+test "La casa tiene 50% de los víveres y necesita 100 pesos para reparaciones. 
+	  tiene asociada la cuenta  corriente con 1000 pesos de saldo y una estrategia de ahorro Full. 
+	  Al hacer un mantenimiento de la casa:
+	  Como la casa no está en orden, aumenta 40% de sus víveres gastando 40 * 5 = 200 pesos.
+	  Si bien luego les alcanza para hacer las reparaciones, no sobrarían 1000 pesos, así que no se hacen.
+	  Verificar que la casa queda con 90% de víveres, mantiene los 100 pesos para reparaciones, y la cuenta corriente 
+	  queda con 800 pesos."{
+	   	casaDePepeYJulian.viveres(50)
+	   	casaDePepeYJulian.seRompioAlgo(100)
+	   	combinada.cuentaPrimaria(cuentaCorriente)
+	   	cuentaCorriente.saldo(1000)
+	   	casaDePepeYJulian.estrategiaAUsar(full)
+	   	full.comprar(full)
+	   	full.repararCasa()
+	   	assert.equals(casaDePepeYJulian.viveres() == 40)
+	   	assert.equals(casaDePepeYJulian.montoDeReparacion() == 100)
+	   	assert.equals(cuentaCorriente.saldo() == 800)
+	   }	  
+	  
